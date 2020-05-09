@@ -1,6 +1,10 @@
 package io.agileazmarino.ppmtool.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
@@ -9,12 +13,21 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long Id;
+    @NotBlank(message = "Project name can't be blank.")
     private String projectName;
+    @NotBlank(message = "Project identifier can't be blank.")
+    @Size(min = 4, max = 5, message = "Please use 4 to 5 characters.")
     private String projectIdentifier;
+    @NotBlank(message = "Project description can't be blank.")
     private String description;
+    @JsonFormat(pattern = "yyyy-mm-dd")
     private Date start_date;
+    @JsonFormat(pattern = "yyyy-mm-dd")
     private Date end_date;
+    @JsonFormat(pattern = "yyyy-mm-dd")
     private Date created_At;
+    @JsonFormat(pattern = "yyyy-mm-dd")
+    private Date update_At;
 
     @PrePersist
     protected void onCreate(){
@@ -40,8 +53,6 @@ public class Project {
     public void setEnd_date(Date end_date) {
         this.end_date = end_date;
     }
-
-    private Date update_At;
 
     public Project() {
     }
