@@ -1,6 +1,7 @@
 package io.agileazmarino.ppmtool.web;
 
 import io.agileazmarino.ppmtool.domain.Project;
+import io.agileazmarino.ppmtool.services.MapValidationErrorService;
 import io.agileazmarino.ppmtool.services.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,16 +23,13 @@ import java.util.Map;
 public class ProjectController {
     @Autowired
     private ProjectService projectService;
+    @Autowired
+    private MapValidationErrorService mapValidationErrorService;
 
     @PostMapping("")
     public ResponseEntity<?> createNewProject(@Valid @RequestBody Project project, BindingResult result){
-        if(result.hasErrors()){
-            Map<String,String> errorMap= new HashMap<String, String>();
-            for(FieldError error: result.getFieldErrors()){
-                errorMap.put(error.getField(), error.getDefaultMessage());
-            }
-            return new ResponseEntity<Map>(errorMap, HttpStatus.BAD_REQUEST);
-        }
+        ResponseEntity<?> errorMap = mapValidationErrorService.mapValidationErrorService(result);
+        if(errorMap != null) return errorMap;
         Project project1 =projectService.saveOrUpdateProject(project);
         return new ResponseEntity<Project>(project,HttpStatus.CREATED);
     }
